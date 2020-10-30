@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import "../styles/App.css";
 
 const App = () => {
@@ -29,32 +29,26 @@ const App = () => {
         </button>
       );
   };
-  document.onkeydown = (event) => {
+  const click = (event) => {
+    const copyBallPosition = { ...ballPosition };
     if (event.keyCode === 39) {
-      let right = ballPosition.left;
-      let top = ballPosition.top;
-      right = right.replace("px", "");
-
-      setBallPosition({ left: parseInt(right) + 5 + "px", top: top });
-      setX(parseInt(ballPosition.left.replace("px", "")));
-    } else if (event.keyCode === 37) {
-      let left = ballPosition.left.replace("px", "");
-      let top = ballPosition.top;
-      setBallPosition({ left: parseInt(left) - 5 + "px", top: top });
-      setX(parseInt(ballPosition.left.replace("px", "")));
-    } else if (event.keyCode === 38) {
-      let top = ballPosition.top.replace("px", "");
-      let left = ballPosition.left;
-      setBallPosition({ left: left, top: parseInt(top) + 5 + "px" });
-      setY(parseInt(ballPosition.top.replace("px", "")));
+      copyBallPosition.left = +copyBallPosition.left.slice(0, -2) + 5 + "px";
     } else if (event.keyCode === 40) {
-      let down = ballPosition.top.replace("px", "");
-      let left = ballPosition.left;
-      setBallPosition({ left: left, top: parseInt(down) - 5 + "px" });
-      setY(parseInt(ballPosition.top.replace("px", "")));
+      copyBallPosition.top = +copyBallPosition.top.slice(0, -2) + 5 + "px";
+    } else if (event.keyCode === 38) {
+      copyBallPosition.top = +copyBallPosition.top.slice(0, -2) - 5 + "px";
+    } else if (event.keyCode === 37) {
+      copyBallPosition.left = +copyBallPosition.left.slice(0, -2) - 5 + "px";
     }
+    console.log(copyBallPosition);
+    setBallPosition(copyBallPosition);
   };
-
+  React.useEffect(() => {
+    document.addEventListener("keydown", click);
+    return () => {
+      document.removeEventListener("keydown", click);
+    };
+  });
   return (
     <div className="playground">
       <button onClick={reset} className="reset">
